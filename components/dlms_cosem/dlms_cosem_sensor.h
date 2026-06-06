@@ -5,6 +5,8 @@
 #include "esphome/components/text_sensor/text_sensor.h"
 #endif
 
+#include <dlmssettings.h>
+
 namespace esphome {
 namespace dlms_cosem {
 
@@ -118,6 +120,9 @@ class DlmsCosemTextSensor : public DlmsCosemSensorBase, public text_sensor::Text
 
   bool has_got_scale_and_unit() override { return true; }
   void set_cp1251_conversion_required(bool required) { this->cp1251_conversion_required_ = required; }
+  void set_data_type_override(DLMS_DATA_TYPE override_type) { this->data_type_override_ = override_type; }
+  DLMS_DATA_TYPE get_data_type_override() const { return this->data_type_override_; }
+  bool has_data_type_override() const { return this->data_type_override_ != DLMS_DATA_TYPE_NONE; }
 
   // Meters do not expose long text values; cap the source at MAX_TEXT_LEN symbols and
   // trim the rest. This keeps the conversion buffer a fixed, bounded stack allocation.
@@ -144,6 +149,7 @@ class DlmsCosemTextSensor : public DlmsCosemSensorBase, public text_sensor::Text
   }
 
   optional<bool> cp1251_conversion_required_{nullopt};
+  DLMS_DATA_TYPE data_type_override_{DLMS_DATA_TYPE_NONE};
 
  protected:
   std::string value_;

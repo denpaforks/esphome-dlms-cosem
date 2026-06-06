@@ -1085,10 +1085,15 @@ int DlmsCosemComponent::set_sensor_value(DlmsCosemSensorBase *sensor, const char
 
         if ((object_class == DLMS_OBJECT_TYPE_DATA) || (object_class == DLMS_OBJECT_TYPE_REGISTER) ||
             (object_class == DLMS_OBJECT_TYPE_EXTENDED_REGISTER)) {
-          auto data_as_string =
-              dlms_data_as_string(vt, raw_ptr, raw_len > UINT8_MAX ? UINT8_MAX : static_cast<uint8_t>(raw_len));
-          static_cast<DlmsCosemTextSensor *>(sensor)->set_value(data_as_string.c_str(),
-                                                                this->cp1251_conversion_required_);
+          // Check if sensor has data_type override (only apply for DATA class)
+          auto effective_vt = vt;
+          auto *text_sensor = static_cast<DlmsCosemTextSensor *>(sensor);
+          if (object_class == DLMS_OBJECT_TYPE_DATA && text_sensor->has_data_type_override()) {
+            effective_vt = text_sensor->get_data_type_override();
+          }
+          auto data_as_string = dlms_data_as_string(effective_vt, raw_ptr,
+              raw_len > UINT8_MAX ? UINT8_MAX : static_cast<uint8_t>(raw_len));
+          text_sensor->set_value(data_as_string.c_str(), this->cp1251_conversion_required_);
         } else {
           ESP_LOGW(TAG, "Wrong OBIS class. We can only handle Data (class 1), Registers (class = 3), Extended "
                         "Registers (class = 4), and Clock (class = 8) for text sensors.");

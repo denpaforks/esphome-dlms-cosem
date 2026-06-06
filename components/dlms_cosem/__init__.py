@@ -37,6 +37,7 @@ CONF_ADDRESS_LENGTH = "address_length"
 CONF_DELAY_BETWEEN_REQUESTS = "delay_between_requests"
 CONF_DONT_PUBLISH = "dont_publish"
 CONF_CP1251 = "cp1251"
+CONF_DATA_TYPE = "data_type"
 
 CONF_PUSH_MODE = "push_mode"
 CONF_PUSH_SHOW_LOG = "push_show_log"
@@ -60,6 +61,11 @@ BLENUSClientComponent = ble_nus_client_ns.class_(
 
 BAUD_RATES = [300, 600, 1200, 2400, 4800, 9600, 19200]
 ADDRESS_LENGTH_ENUM = [1, 2, 4]
+
+DATA_TYPE_OPTIONS = {
+    "octet_string": "DLMS_DATA_TYPE_OCTET_STRING",
+    "datetime": "DLMS_DATA_TYPE_DATETIME",
+}
 
 def obis_code(value):
     value = cv.string(value)
